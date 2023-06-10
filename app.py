@@ -7,15 +7,14 @@ import torch
 from torchvision import transforms
 
 app = Potassium("stable-diffusion-app")
-
+DEVICE = 0 if torch.cuda.is_available() else -1
 # @app.init runs at startup, and loads models into the app's context
 @app.init
 def init():
-    device = 0 if torch.cuda.is_available() else -1
     model = StableDiffusionImageVariationPipeline.from_pretrained(
         "lambdalabs/sd-image-variations-diffusers",
         )
-    model = model.to(device)
+    model = model.to(DEVICE)
     context = {
         "model": model
     }
@@ -36,26 +35,37 @@ def pre_process_image(base64_image):
         [0.48145466, 0.4578275, 0.40821073],
         [0.26862954, 0.26130258, 0.27577711]),
     ])
-    device = 0 if torch.cuda.is_available() else -1
-    inp = tform(im).to(device).unsqueeze(0)
+    inp = tform(im).to(DEVICE).unsqueeze(0)
     return inp
+
+# convert images to base64 string
+def image_to_base64(images_list):
+    output = []
+    for i, image in enumerate(images_list):
+        if(images_list["nsfw_content_detected"][i]):
+            image = Image.open(r"unsafe.png")
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = base64.b64encode(buffered.getvalue())
+        img_str = img_str.decode('utf-8')
+        output.append(img_str)
+    return output
 
 # @app.handler runs for every call
 @app.handler()
 def handler(context: dict, request: Request) -> Response:
     base64_image = request.json.get("base64_input")
+    n_samples = request.json.get("output_images_number")
+    scale = request.json.get("guidance_scale")
+    steps = request.json.get("steps")
+    seed = request.json.get("seed")
     processed_image = pre_process_image(base64_image)
     model = context.get("model")
-    outputs = model(processed_image, guidance_scale=3)
-    output = outputs["images"][0]
-    if(outputs["nsfw_content_detected"][0]):
-        output = Image.open(r"unsafe.png")
-    buffered = BytesIO()
-    output.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
-    img_str = img_str.decode('utf-8')
+    generator = torch.Generator(device=DEVICE).manual_seed(int(seed))
+    outputs = model(processed_image.tile(n_samples, 1, 1, 1), guidance_scale=scale, num_inference_steps=steps, generator=generator)
+    image_strings = image_to_base64(outputs["images"])    
     return Response(
-        json = {"output": img_str}, 
+        json = {"base64_images": image_strings}, 
         status=200
     )
 
