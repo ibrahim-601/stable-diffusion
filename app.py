@@ -43,7 +43,7 @@ def pre_process_image(base64_image):
 # @app.handler runs for every call
 @app.handler()
 def handler(context: dict, request: Request) -> Response:
-    base64_image = request.json.get("image")
+    base64_image = request.json.get("base64_input")
     processed_image = pre_process_image(base64_image)
     model = context.get("model")
     outputs = model(processed_image, guidance_scale=3)
