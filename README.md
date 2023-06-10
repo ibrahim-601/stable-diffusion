@@ -15,7 +15,8 @@ pip install Pillow
 pip install gradio
 pip install banana_dev
 ```
-2. Run the script by executing below command in a terminal.
+2. Open [clinet.py](./client.py) in a text editor and set your API key and MODEL key from [banana.dev](https://www.banana.dev/) and save the file
+3. Run the script by executing below command in a terminal.
 ```bash
 python client.py
 ```

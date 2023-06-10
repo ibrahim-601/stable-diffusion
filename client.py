@@ -5,8 +5,8 @@ from PIL import Image
 import gradio as gr
 import banana_dev as banana
 
-API_KEY = "02d58b66-a69c-446c-bbb1-c6603b0fd314"
-MODEL_KEY = "2e7f30c2-9703-4c3c-b829-b446d28f9df4"
+API_KEY = "your_api_key"
+MODEL_KEY = "you_model_key"
 
 # function to save base64 string as image
 def base64_to_image(base64_images):
