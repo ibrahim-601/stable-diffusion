@@ -1,0 +1,11 @@
+{
+    "name": "Stable diffusion image variation model",
+    "category": "stable-diffusion",
+    "example_input": {
+        "image": "base64 image goes here"
+    },
+    "example_output": {
+        "output": "base64 image"
+    },
+    "version": "1"
+}
