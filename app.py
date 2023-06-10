@@ -53,6 +53,7 @@ def handler(context: dict, request: Request) -> Response:
     buffered = BytesIO()
     output.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue())
+    img_str = img_str.decode('utf-8')
     return Response(
         json = {"output": img_str}, 
         status=200
