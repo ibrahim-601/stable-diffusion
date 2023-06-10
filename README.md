@@ -1,14 +1,24 @@
-# My Potassium App
-This is a Potassium HTTP server, created with `banana init` CLI
+# Stable Diffusion demo
+This is a demo project to use [Stable Diffusion](https://huggingface.co/lambdalabs/sd-image-variations-diffusers) model hosted on [banana.dev](https://www.banana.dev/).
 
-### Testing
-Start a local dev server with `banana dev`
+## Testing
+You can test this using any of two ways described below
 
-### Deployment
-1. Create empty repo on [Github](https://github.com)
-2. Push this repo to github
+### Using API 
+To test the model using API with different SDKs follow the instructions from [banana.dev](https://docs.banana.dev/banana-docs/core-concepts/sdks).
+
+### Using provided script
+You can also test this model using provided [clinet.py](./client.py) script. To use this script follow below instructions.
+1. Install dependencies by executing below command in a terminal.
+```bash
+pip install Pillow
+pip install gradio
+pip install banana_dev
 ```
-git remote add origin https://github.com/{username}/{repo-name}.git
+2. Run the script by executing below command in a terminal.
+```bash
+python client.py
 ```
-3. [Log into Banana](https://app.banana.dev/onboard)
-4. Select this repo to build and deploy!
+3. Previos command will show a link in the terminal. Open the link in a browser.
+4. Use the GUI to select image, change parameters (Guidence scale, Steps, etc.) and press the `Submit` button.
+5. After sometime output will be shown at right side of the screen.
