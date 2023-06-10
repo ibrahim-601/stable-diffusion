@@ -39,10 +39,10 @@ def pre_process_image(base64_image):
     return inp
 
 # convert images to base64 string
-def image_to_base64(images_list):
+def image_to_base64(model_output):
     output = []
-    for i, image in enumerate(images_list):
-        if(images_list["nsfw_content_detected"][i]):
+    for i, image in enumerate(model_output["images"]):
+        if(model_output["nsfw_content_detected"][i]):
             image = Image.open(r"unsafe.png")
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
@@ -63,7 +63,7 @@ def handler(context: dict, request: Request) -> Response:
     model = context.get("model")
     generator = torch.Generator(device=DEVICE).manual_seed(int(seed))
     outputs = model(processed_image.tile(n_samples, 1, 1, 1), guidance_scale=scale, num_inference_steps=steps, generator=generator)
-    image_strings = image_to_base64(outputs["images"])    
+    image_strings = image_to_base64(outputs)
     return Response(
         json = {"base64_images": image_strings}, 
         status=200
